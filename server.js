@@ -131,3 +131,8 @@ app.put("/alunos/:id", autenticarToken, (req, res) => {
     alunos[index] = req.body;
     res.json({ message: "Aluno atualizado!" });
 });
+
+//Cria servidor
+app.listen(3000, () => {
+    console.log('Servidor rodando na porta 3000');
+});
