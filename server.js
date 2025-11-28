@@ -93,15 +93,15 @@ app.get('/alunos/medias', autenticarToken, (req, res) => {
 
 // /alunos/aprovados
 app.get('/alunos/aprovados', autenticarToken, (req, res) => {
-    const aprovados = alunos.filter(a => {
+    const result = alunos.map(a => {
         const media = (a.nota1 + a.nota2) / 2;
 
         return {
             nome: a.nome, 
-            status: media >= 7 ? 'Aprovado' : 'Reprovado'
+            status: media >= 6 ? 'Aprovado' : 'Reprovado'
         };
     });
-    res.json(aprovados);
+    res.json(result);
 });
 
 // /alunos/:id
