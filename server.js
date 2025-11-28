@@ -27,7 +27,7 @@ function autenticartoken(req, res, next) {
 
         });
     }
-//Verifica o token
+    //Verifica o token
     jwt.verify(token, JWT_SECRET, (err, usuario) => {
         if(err){
             return res.status(403).json({message: 'Token inválido!'});
@@ -36,3 +36,18 @@ function autenticartoken(req, res, next) {
         next();
     });
 }
+
+//Post do /register
+app.post('/register', async (req, res) => {
+    const { username, password } = req.body;
+
+    //Valida os dados
+    if(!username || !password){
+        return res.status(400).json({message: 'Informe usuário e senha!'});
+    }
+
+    //Verifica se o usuário existe 
+    const hashedPassword = await bcrypt.hash(password, 10);
+    users.push({ username, password: hashedPassword });
+    res.status(201).json({message: 'Usuário registrado!'});
+});
