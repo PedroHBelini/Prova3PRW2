@@ -100,3 +100,34 @@ app.get('/alunos/aprovados', autenticartoken, (req, res) => {
     });
     res.json(aprovados);
 });
+
+// /alunos/:id
+app.get("/alunos/:id", autenticarToken, (req, res) => {
+    const id = Number(req.params.id);
+    const aluno = alunos.find(a => a.id === id);
+
+    if (!aluno) {
+        return res.status(404).json({ message: "Aluno não encontrado!" });
+    }
+
+    res.json(aluno);
+});
+
+//Cria aluno
+app.post("/alunos", autenticarToken, (req, res) => {
+    alunos.push(req.body);
+    res.json({ message: "Aluno cadastrado!" });
+});
+
+// Atualizar aluno
+app.put("/alunos/:id", autenticarToken, (req, res) => {
+    const id = Number(req.params.id);
+    const index = alunos.findIndex(a => a.id === id);
+
+    if (index === -1) {
+        return res.status(404).json({ message: "Aluno não encontrado!" });
+    }
+
+    alunos[index] = req.body;
+    res.json({ message: "Aluno atualizado!" });
+});
