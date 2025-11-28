@@ -1,3 +1,4 @@
+//Feito por Pedro Henrique e Eduardo Aguliari - PRW2
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
