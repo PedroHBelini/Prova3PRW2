@@ -75,7 +75,7 @@ app.post('/login', async (req, res) => {
 
     //retorna o token e usuario
     return res.json({
-        message: "Login efetuado pelo usuário ${username}",
+        message: `Login efetuado pelo usuário ${username}`,
         token: token
     });
 });
