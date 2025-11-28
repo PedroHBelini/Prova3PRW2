@@ -51,3 +51,24 @@ app.post('/register', async (req, res) => {
     users.push({ username, password: hashedPassword });
     res.status(201).json({message: 'Usuário registrado!'});
 });
+
+//Post do /login
+app.post('/login', async (req, res) => {
+    const {username, password} = req.body;
+
+    //Valida usuário
+    if(!username || !password){
+        return res.status(400).json({message: 'Usuário não encontrado!'});
+    }
+
+    //verifica senha
+    const senhaValida = await bcrypt.compare(password, user.password);
+
+    if(!senhaValida){
+        return res.status(401).json({message: 'Senha inválida!'});
+    }
+    
+    //Gera o token
+    const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h' });
+    res.json({ token });
+});
