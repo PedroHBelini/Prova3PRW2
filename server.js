@@ -67,8 +67,36 @@ app.post('/login', async (req, res) => {
     if(!senhaValida){
         return res.status(401).json({message: 'Senha inválida!'});
     }
-    
+
     //Gera o token
     const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h' });
     res.json({ token });
+});
+
+//Rotas
+// /alunos
+app.get('/alunos', autenticartoken, (req, res) => {
+    res.json(alunos);
+});
+
+// /alunos/medias
+app.get('/alunos/medias', autenticartoken, (req, res) => {
+    const medias = alunos.map(a => ({
+        nome: a.nome,
+        media: (a.nota1 + a.nota2) / 2
+    }));
+    res.json(medias);
+});
+
+// /alunos/aprovados
+app.get('/alunos/aprovados', autenticartoken, (req, res) => {
+    const aprovados = alunos.filter(a => {
+        const media = (a.nota1 + a.nota2) / 2;
+
+        return {
+            nome: a.nome, 
+            status: media >= 7 ? 'Aprovado' : 'Reprovado'
+        };
+    });
+    res.json(aprovados);
 });
