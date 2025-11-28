@@ -18,7 +18,7 @@ const alunos = [
 ];
 
 //Middleware de autenticação
-function autenticartoken(req, res, next) {
+function autenticarToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
@@ -54,33 +54,36 @@ app.post('/register', async (req, res) => {
 
 //Post do /login
 app.post('/login', async (req, res) => {
-    const {username, password} = req.body;
+    const { username, password } = req.body;
 
-    //Valida usuário
-    if(!username || !password){
-        return res.status(400).json({message: 'Usuário não encontrado!'});
+    // procura usuário no "banco" local
+    const user = users.find(u => u.username === username);
+
+    if (!user) {
+        return res.status(400).json({ message: "Usuário não encontrado!" });
     }
 
-    //verifica senha
+    // compara senha digitada com o hash salvo
     const senhaValida = await bcrypt.compare(password, user.password);
 
-    if(!senhaValida){
-        return res.status(401).json({message: 'Senha inválida!'});
+    if (!senhaValida) {
+        return res.status(401).json({ message: "Senha inválida!" });
     }
 
-    //Gera o token
+    // gera token JWT contendo o username
     const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
+
+    return res.json({ token });
 });
 
 //Rotas
 // /alunos
-app.get('/alunos', autenticartoken, (req, res) => {
+app.get('/alunos', autenticarToken, (req, res) => {
     res.json(alunos);
 });
 
 // /alunos/medias
-app.get('/alunos/medias', autenticartoken, (req, res) => {
+app.get('/alunos/medias', autenticarToken, (req, res) => {
     const medias = alunos.map(a => ({
         nome: a.nome,
         media: (a.nota1 + a.nota2) / 2
@@ -89,7 +92,7 @@ app.get('/alunos/medias', autenticartoken, (req, res) => {
 });
 
 // /alunos/aprovados
-app.get('/alunos/aprovados', autenticartoken, (req, res) => {
+app.get('/alunos/aprovados', autenticarToken, (req, res) => {
     const aprovados = alunos.filter(a => {
         const media = (a.nota1 + a.nota2) / 2;
 
@@ -102,8 +105,8 @@ app.get('/alunos/aprovados', autenticartoken, (req, res) => {
 });
 
 // /alunos/:id
-app.get("/alunos/:id", autenticarToken, (req, res) => {
-    const id = Number(req.params.id);
+app.get("/alunos/id", autenticarToken, (req, res) => {
+    const id = Number(req.query.id);
     const aluno = alunos.find(a => a.id === id);
 
     if (!aluno) {
@@ -120,8 +123,8 @@ app.post("/alunos", autenticarToken, (req, res) => {
 });
 
 // Atualizar aluno
-app.put("/alunos/:id", autenticarToken, (req, res) => {
-    const id = Number(req.params.id);
+app.put("/alunos/id", autenticarToken, (req, res) => {
+    const id = Number(req.query.id);
     const index = alunos.findIndex(a => a.id === id);
 
     if (index === -1) {
@@ -130,6 +133,19 @@ app.put("/alunos/:id", autenticarToken, (req, res) => {
 
     alunos[index] = req.body;
     res.json({ message: "Aluno atualizado!" });
+});
+
+// Deletar aluno
+app.delete("/alunos/id", autenticarToken, (req, res) => {
+    const id = Number(req.params.id);
+    const index = alunos.findIndex(a => a.id === id);
+
+    if (index === -1) {
+        return res.status(404).json({ message: "Aluno não encontrado!" });
+    }
+
+    alunos.splice(index, 1);
+    res.json({ message: "Aluno removido!" });
 });
 
 //Cria servidor
