@@ -105,8 +105,8 @@ app.get('/alunos/aprovados', autenticarToken, (req, res) => {
 });
 
 // /alunos/:id
-app.get("/alunos/id", autenticarToken, (req, res) => {
-    const id = Number(req.query.id);
+app.get("/alunos/:id", autenticarToken, (req, res) => {
+    const id = Number(req.params.id);
     const aluno = alunos.find(a => a.id === id);
 
     if (!aluno) {
@@ -123,8 +123,8 @@ app.post("/alunos", autenticarToken, (req, res) => {
 });
 
 // Atualizar aluno
-app.put("/alunos/id", autenticarToken, (req, res) => {
-    const id = Number(req.query.id);
+app.put("/alunos/:id", autenticarToken, (req, res) => {
+    const id = Number(req.params.id);
     const index = alunos.findIndex(a => a.id === id);
 
     if (index === -1) {
@@ -136,7 +136,7 @@ app.put("/alunos/id", autenticarToken, (req, res) => {
 });
 
 // Deletar aluno
-app.delete("/alunos/id", autenticarToken, (req, res) => {
+app.delete("/alunos/:id", autenticarToken, (req, res) => {
     const id = Number(req.params.id);
     const index = alunos.findIndex(a => a.id === id);
 
