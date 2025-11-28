@@ -73,7 +73,11 @@ app.post('/login', async (req, res) => {
     // gera token JWT contendo o username
     const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h' });
 
-    return res.json({ token });
+    //retorna o token e usuario
+    return res.json({
+        message: "Login efetuado pelo usuário ${username}",
+        token: token
+    });
 });
 
 //Rotas
